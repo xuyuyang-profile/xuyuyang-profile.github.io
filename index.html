@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Me</title>
+    <title>Personal Design Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script>
@@ -11,13 +11,17 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#F8C2D0',
+                        primary: '#E87A90',
                         secondary: '#FDF2E9',
-                        text: '#333333',
-                        accent: '#E87A90'
+                        dark: '#333333',
+                        'light-pink': '#F8C2D0',
+                        'orange-accent': '#FF7A5A',
+                        blue: '#6AAED9',
+                        brown: '#C2946A'
                     },
                     fontFamily: {
-                        sans: ['Arial', 'sans-serif']
+                        sans: ['Helvetica', 'Arial', 'sans-serif'],
+                        handwritten: ['Comic Sans MS', 'Comic Neue', 'cursive']
                     }
                 }
             }
@@ -25,6 +29,15 @@
     </script>
     <style type="text/tailwindcss">
         @layer utilities {
+            .vertical-line {
+                height: 70vh;
+                width: 1px;
+                background-color: #333333;
+            }
+            .diamond {
+                transform: rotate(45deg);
+                display: inline-block;
+            }
             .border-dashed-pink {
                 border: 1.5px dashed #E87A90;
             }
@@ -39,194 +52,675 @@
                 background-color: #E87A90;
                 border-radius: 3px;
             }
+            .sketch-border {
+                position: relative;
+                border: none;
+            }
+            .sketch-border::after {
+                content: '';
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                right: -2px;
+                bottom: -2px;
+                border: 1px solid #333;
+                z-index: -1;
+                transform: rotate(-0.5deg);
+            }
+            .sketch-border:hover::after {
+                transform: rotate(0.5deg) scale(1.02);
+                transition: all 0.3s ease;
+            }
+            
+            /* Animations */
+            @keyframes float {
+                0%, 100% { transform: translateY(0px) rotate(45deg); }
+                50% { transform: translateY(-15px) rotate(45deg); }
+            }
+            @keyframes float-circle {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-15px); }
+            }
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(30px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes growLine {
+                from { height: 0; }
+                to { height: 70vh; }
+            }
+            
+            .animate-float { animation: float 6s ease-in-out infinite; }
+            .animate-float-circle { animation: float-circle 5s ease-in-out infinite; }
+            .animate-fade-in-up { animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+            .animate-fade-in { animation: fadeIn 1.5s ease-out forwards; opacity: 0; }
+            .animate-grow-line { animation: growLine 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+            
+            .delay-100 { animation-delay: 0.1s; }
+            .delay-200 { animation-delay: 0.2s; }
+            .delay-300 { animation-delay: 0.3s; }
+            .delay-500 { animation-delay: 0.5s; }
+            .delay-700 { animation-delay: 0.7s; }
+            .delay-1000 { animation-delay: 1s; }
+
+            /* Nav Item Styles */
+            .nav-item {
+                position: relative;
+                padding-bottom: 2px;
+            }
+            .nav-item::after {
+                content: '';
+                position: absolute;
+                width: 0;
+                height: 2px;
+                bottom: 0;
+                left: 50%;
+                background-color: #E87A90;
+                transition: all 0.3s ease;
+                transform: translateX(-50%);
+            }
+            .nav-item:hover::after, .nav-item.active::after {
+                width: 100%;
+            }
+            .nav-item.active {
+                color: #E87A90;
+                font-weight: 600;
+            }
         }
     </style>
 </head>
-<body class="bg-secondary min-h-screen p-6 md:p-12">
-    <div class="max-w-6xl mx-auto">
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10">
-            <div class="w-full md:w-1/2 border-l-2 border-accent pl-4 pb-2">
-                <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-bold text-text">ABOUT ME</h1>
-                <p class="text-lg text-text mt-2">자기소개</p>
+<body class="bg-secondary min-h-screen overflow-x-hidden">
+    <!-- Navigation Bar -->
+    <nav class="fixed top-6 right-6 md:right-12 z-50">
+        <ul class="flex space-x-8 bg-white/90 backdrop-blur-md px-8 py-4 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-white/50 transition-all hover:shadow-[0_8px_30px_rgba(232,122,144,0.15)]">
+            <li><a href="#" onclick="showSection('home'); return false;" id="nav-home" class="nav-item text-dark/80 hover:text-primary text-sm uppercase tracking-widest transition-colors active">Home</a></li>
+            <li><a href="#" onclick="showSection('about'); return false;" id="nav-about" class="nav-item text-dark/80 hover:text-primary text-sm uppercase tracking-widest transition-colors">About</a></li>
+            <li><a href="#" onclick="showSection('works'); return false;" id="nav-works" class="nav-item text-dark/80 hover:text-primary text-sm uppercase tracking-widest transition-colors">Works</a></li>
+        </ul>
+    </nav>
+
+    <div class="container mx-auto px-6 md:px-12 relative pt-20">
+        <!-- Home Section -->
+        <div id="home-section" class="transition-opacity duration-500 min-h-[80vh] flex flex-col justify-center">
+            <!-- Background Decoration -->
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-[80vw] bg-gradient-to-b from-light-pink/10 to-transparent rounded-full blur-3xl -z-10 pointer-events-none"></div>
+
+            <!-- Top Header -->
+            <header class="pb-12 flex justify-between items-center animate-fade-in delay-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-2 h-8 bg-primary"></div>
+                    <div>
+                        <h1 class="text-dark font-black text-lg tracking-widest uppercase leading-none">
+                            Xu Yiyang
+                        </h1>
+                        <p class="text-dark/50 text-xs tracking-widest uppercase mt-1">Portfolio 2025</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="flex flex-col items-center justify-center relative text-center py-10">
+                <!-- Left Vertical Line with Decorations -->
+                <div class="hidden md:block absolute left-4 md:left-12 top-0 bottom-0">
+                    <div class="h-full w-px bg-dark/10 animate-grow-line origin-top mx-auto"></div>
+                    <!-- Decorations -->
+                    <div class="absolute -left-1.5 top-[20%] flex flex-col gap-y-32 animate-fade-in delay-700">
+                        <div class="w-3 h-3 bg-primary rotate-45 animate-float"></div>
+                        <div class="w-2 h-2 border border-dark rounded-full animate-float delay-500 ml-0.5"></div>
+                    </div>
+                </div>
+
+                <!-- Center Content -->
+                <div class="z-10 relative">
+                    <!-- Large Background Text -->
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10rem] md:text-[15rem] font-black text-dark/5 whitespace-nowrap select-none pointer-events-none z-[-1] font-sans">
+                        DESIGN
+                    </div>
+
+                    <!-- Main Title -->
+                    <h2 class="text-[clamp(3.5rem,10vw,7rem)] font-black text-dark tracking-tighter mb-4 animate-fade-in-up delay-300">
+                        작품집
+                    </h2>
+                    
+                    <p class="text-primary font-handwritten text-2xl md:text-3xl mb-12 animate-fade-in-up delay-500">
+                        Creative Design Collection
+                    </p>
+
+                    <!-- CTA Button -->
+                    <button onclick="showSection('works')" class="group relative inline-flex items-center gap-3 px-8 py-4 bg-dark text-white rounded-full overflow-hidden transition-all hover:bg-primary hover:shadow-lg hover:shadow-primary/30 animate-fade-in-up delay-700">
+                        <span class="font-bold tracking-wide text-sm">VIEW WORKS</span>
+                        <i class="fa fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+
+                <!-- Right Vertical Line with Decorations -->
+                <div class="hidden md:block absolute right-4 md:right-12 top-0 bottom-0">
+                    <div class="h-full w-px bg-dark/10 animate-grow-line origin-top delay-200 mx-auto"></div>
+                    <!-- Decorations -->
+                    <div class="absolute -right-1.5 top-[40%] flex flex-col gap-y-40 animate-fade-in delay-1000">
+                        <div class="w-3 h-3 border-2 border-primary rounded-full animate-float-circle"></div>
+                        <div class="w-2 h-2 bg-dark rotate-45 animate-float-circle delay-500 ml-0.5"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- About Section -->
+        <div id="about-section" class="hidden transition-opacity duration-500 pt-12">
+            <!-- Header -->
+            <header class="flex justify-between items-end mb-16 pb-6 border-b-2 border-dark/10">
+                <div>
+                    <h1 class="text-dark text-4xl md:text-5xl font-black tracking-tight mb-2 font-sans">ABOUT ME</h1>
+                    <p class="text-dark/60 text-sm font-bold tracking-widest uppercase">Profile & Skills</p>
+                </div>
+                <p class="text-dark/80 text-lg font-bold font-handwritten">2025</p>
+            </header>
+
+            <!-- Main Content -->
+            <div class="flex flex-col md:flex-row gap-12">
+                <!-- Left Column - Profile Info -->
+                <div class="w-full md:w-1/3">
+                    <div class="sketch-border bg-white p-8 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-500 group">
+                        <!-- Profile Image -->
+                        <div class="mb-8 flex justify-center">
+                            <div class="w-48 h-48 relative">
+                                <div class="absolute inset-0 bg-primary/10 rounded-full animate-float-circle"></div>
+                                <svg viewBox="0 0 200 200" class="w-full h-full relative z-10 transform group-hover:scale-105 transition-transform duration-500">
+                                    <!-- Hair -->
+                                    <path d="M70,80 Q100,40 130,80 L130,150 Q100,170 70,150 Z" fill="white" stroke="#333" stroke-width="2.5"/>
+                                    <!-- Face -->
+                                    <circle cx="100" cy="100" r="35" fill="white" stroke="#333" stroke-width="2.5"/>
+                                    <!-- Eyes -->
+                                    <circle cx="85" cy="95" r="3.5" fill="#333"/>
+                                    <circle cx="115" cy="95" r="3.5" fill="#333"/>
+                                    <!-- Mouth -->
+                                    <path d="M90,115 Q100,125 110,115" fill="none" stroke="#333" stroke-width="2.5"/>
+                                    <!-- Cheeks -->
+                                    <circle cx="75" cy="105" r="6" fill="#F8C2D0" opacity="0.8"/>
+                                    <circle cx="125" cy="105" r="6" fill="#F8C2D0" opacity="0.8"/>
+                                    <!-- Headband -->
+                                    <path d="M60,80 Q100,60 140,80" fill="none" stroke="#333" stroke-width="2.5"/>
+                                    <!-- Bow -->
+                                    <path d="M90,120 Q100,110 110,120 M100,110 L100,130" fill="none" stroke="#333" stroke-width="2.5"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Personal Info -->
+                        <div class="space-y-5">
+                            <div class="border-b border-dark/10 pb-4">
+                                <p class="text-xs text-dark/50 font-bold uppercase tracking-wider mb-1">Name</p>
+                                <p class="font-black text-xl text-dark">쉬이양 <span class="text-sm font-normal text-dark/60 ml-2">(Xu Yiyang)</span></p>
+                            </div>
+                            <div class="border-b border-dark/10 pb-4">
+                                <p class="text-xs text-dark/50 font-bold uppercase tracking-wider mb-1">MBTI</p>
+                                <p class="font-black text-xl text-dark">ISTP</p>
+                            </div>
+                            <div class="border-b border-dark/10 pb-4">
+                                <p class="text-xs text-dark/50 font-bold uppercase tracking-wider mb-1">Contact</p>
+                                <div class="flex items-center mt-1">
+                                    <i class="fa fa-phone text-primary mr-3"></i>
+                                    <p class="text-dark font-bold">010-5807-2613</p>
+                                </div>
+                                <div class="flex items-center mt-2">
+                                    <i class="fa fa-envelope text-primary mr-3"></i>
+                                    <p class="text-dark font-bold">xuyuyang@naver.com</p>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-xs text-dark/50 font-bold uppercase tracking-wider mb-1">Location</p>
+                                <div class="flex items-center mt-1">
+                                    <i class="fa fa-map-marker text-primary mr-3"></i>
+                                    <p class="text-dark font-bold">중국 강시성</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Details -->
+                <div class="w-full md:w-2/3 space-y-12">
+                    <!-- Introduction -->
+                    <div class="relative">
+                        <h3 class="text-2xl font-black text-dark mb-6 font-handwritten">Hello!</h3>
+                        <p class="text-dark/80 leading-loose text-lg font-medium">
+                            저는 <span class="bg-primary/20 px-1">밝고 소통에 능한 성격</span>으로, 2년간 영상 제작 경험을 보유하고 있습니다. 
+                            PS, After Effects, Final Cut Pro 등 편집 프로그램을 능숙하게 다루며, 
+                            <span class="border-b-2 border-primary">탄탄한 편집 및 촬영 특수효과 실력</span>을 갖추고 있습니다.
+                        </p>
+                    </div>
+
+                    <!-- Skills Section -->
+                    <div>
+                        <h3 class="text-xl font-black text-dark mb-6 flex items-center gap-3">
+                            <span class="w-8 h-1 bg-primary"></span>
+                            SKILLS
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Software Skills -->
+                            <div class="sketch-border bg-white p-6 hover:-translate-y-1 transition-transform duration-300">
+                                <h4 class="font-black text-dark mb-6 text-sm uppercase tracking-wider">Software</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-xs font-bold text-dark">Photoshop</span>
+                                            <span class="text-xs font-bold text-primary">85%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 85%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-xs font-bold text-dark">Illustrator</span>
+                                            <span class="text-xs font-bold text-primary">65%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 65%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-xs font-bold text-dark">After Effects</span>
+                                            <span class="text-xs font-bold text-primary">70%</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 70%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Video Production Skills -->
+                            <div class="sketch-border bg-white p-6 hover:-translate-y-1 transition-transform duration-300">
+                                <h4 class="font-black text-dark mb-6 text-sm uppercase tracking-wider">Video Production</h4>
+                                <ul class="space-y-3">
+                                    <li class="flex items-center text-sm font-bold text-dark/80">
+                                        <i class="fa fa-check text-primary mr-3 text-xs"></i>촬영 기술
+                                    </li>
+                                    <li class="flex items-center text-sm font-bold text-dark/80">
+                                        <i class="fa fa-check text-primary mr-3 text-xs"></i>영상 편집
+                                    </li>
+                                    <li class="flex items-center text-sm font-bold text-dark/80">
+                                        <i class="fa fa-check text-primary mr-3 text-xs"></i>후반 작업
+                                    </li>
+                                    <li class="flex items-center text-sm font-bold text-dark/80">
+                                        <i class="fa fa-check text-primary mr-3 text-xs"></i>영상 기획
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- Education Summary -->
+                            <div class="sketch-border bg-white p-6 hover:-translate-y-1 transition-transform duration-300">
+                                <h4 class="font-black text-dark mb-6 text-sm uppercase tracking-wider">Education</h4>
+                                <div class="text-center pt-2">
+                                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <i class="fa fa-graduation-cap text-primary"></i>
+                                    </div>
+                                    <p class="font-black text-dark">단국대학교</p>
+                                    <p class="text-xs text-dark/60 mt-1 font-bold">영상콘텐츠학부</p>
+                                    <p class="text-xs text-primary mt-2 font-bold">GPA 3.7 / 4.5</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Experience & Education Details -->
+                    <div>
+                        <h3 class="text-xl font-black text-dark mb-6 flex items-center gap-3">
+                            <span class="w-8 h-1 bg-primary"></span>
+                            HISTORY
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Education Detail -->
+                            <div class="sketch-border bg-white p-6 hover:-translate-y-1 transition-transform duration-300">
+                                <h4 class="font-black text-dark mb-4 text-lg">Education</h4>
+                                
+                                <div class="mb-6">
+                                    <p class="font-bold text-dark text-sm">단국대학교 (Dankook University)</p>
+                                    <p class="text-xs text-primary font-bold mb-2">미디어커뮤니케이션학과</p>
+                                    <p class="text-dark/70 text-xs leading-relaxed">주요 과목: 영상 제작, 디자인, 미디어 연구</p>
+                                </div>
+                                
+                                <div>
+                                    <p class="font-bold text-dark text-sm">중국 강시성 전천 1중학교</p>
+                                    <p class="text-xs text-primary font-bold mb-2">고등학교</p>
+                                    <p class="text-dark/70 text-xs leading-relaxed">교과 방송부 활동, 음악 동아리 부원장 경험<br>교내 카메라 기기 및 실습 참여</p>
+                                </div>
+                            </div>
+
+                            <!-- Experience Detail -->
+                            <div class="sketch-border bg-white p-6 hover:-translate-y-1 transition-transform duration-300">
+                                <h4 class="font-black text-dark mb-4 text-lg">Experience</h4>
+                                
+                                <div class="mb-6">
+                                    <p class="font-bold text-dark text-sm">캠퍼스 활동</p>
+                                    <p class="text-xs text-primary font-bold mb-2">음악 동아리 부원장</p>
+                                    <ul class="text-dark/70 text-xs leading-relaxed list-disc pl-4 space-y-1">
+                                        <li>교내 카메라 기기 및 실습 담당</li>
+                                        <li>텔레비전 방송실 운영 및 촬영 참여</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <p class="font-bold text-dark text-sm">학부 미디어 프로젝트</p>
+                                    <p class="text-xs text-primary font-bold mb-2">단국대학교</p>
+                                    <ul class="text-dark/70 text-xs leading-relaxed list-disc pl-4 space-y-1">
+                                        <li>영상 제작, 편집, 특수효과 작업</li>
+                                        <li>디자인 및 포토샵 작업</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="flex flex-col md:flex-row gap-8">
-            <!-- Left Column - Profile Info -->
-            <div class="w-full md:w-1/3">
-                <div class="border-2 border-accent p-6 bg-white rounded-sm transform hover:shadow-md transition-shadow">
-                    <!-- Profile Image -->
-                    <div class="border-dashed-pink p-4 mb-6">
-                        <svg viewBox="0 0 200 200" class="w-full h-auto">
-                            <!-- Hair -->
-                            <path d="M70,80 Q100,40 130,80 L130,150 Q100,170 70,150 Z" fill="none" stroke="#333" stroke-width="2"/>
-                            <!-- Face -->
-                            <circle cx="100" cy="100" r="35" fill="none" stroke="#333" stroke-width="2"/>
-                            <!-- Eyes -->
-                            <circle cx="85" cy="95" r="3" fill="#333"/>
-                            <circle cx="115" cy="95" r="3" fill="#333"/>
-                            <!-- Mouth -->
-                            <path d="M90,115 Q100,125 110,115" fill="none" stroke="#333" stroke-width="2"/>
-                            <!-- Cheeks -->
-                            <circle cx="75" cy="105" r="5" fill="#F8C2D0" opacity="0.7"/>
-                            <circle cx="125" cy="105" r="5" fill="#F8C2D0" opacity="0.7"/>
-                            <!-- Headband -->
-                            <path d="M60,80 Q100,60 140,80" fill="none" stroke="#333" stroke-width="2"/>
-                            <path d="M70,85 Q100,65 130,85" fill="none" stroke="#333" stroke-width="2"/>
-                            <!-- Bow -->
-                            <path d="M90,120 Q100,110 110,120 M100,110 L100,130" fill="none" stroke="#333" stroke-width="2"/>
+        <!-- Works Section -->
+        <div id="works-section" class="hidden transition-opacity duration-500 pt-12">
+            <!-- Header -->
+            <header class="flex justify-between items-end mb-16 pb-6 border-b-2 border-dark/10">
+                <div>
+                    <h1 class="text-dark text-4xl md:text-5xl font-black tracking-tight mb-2 font-sans">PORTFOLIO</h1>
+                    <p class="text-dark/60 text-sm font-bold tracking-widest uppercase">Design Collection</p>
+                </div>
+                <p class="text-dark/80 text-lg font-bold font-handwritten">2025</p>
+            </header>
+
+            <!-- Portfolio Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-16">
+                <!-- First Work - Coffee Time -->
+                <div class="sketch-border bg-white p-8 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-500 flex flex-col group">
+                    <div class="mb-6">
+                        <h3 class="text-3xl md:text-4xl font-black text-dark font-handwritten mb-3 tracking-wide group-hover:text-primary transition-colors">C<span class="text-blue">o</span>FFEE.</h3>
+                        <div class="flex items-center gap-2">
+                            <p class="text-orange-accent font-bold font-handwritten text-lg">[TIME:]</p>
+                            <p class="text-dark font-bold font-handwritten text-lg">08:00 — 19:00</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Cat Illustration -->
+                    <div class="my-6 transform group-hover:scale-105 transition-transform duration-500">
+                        <svg viewBox="0 0 200 150" class="w-full h-auto">
+                            <!-- Cat -->
+                            <circle cx="100" cy="70" r="30" fill="none" stroke="#333" stroke-width="2" />
+                            <ellipse cx="85" cy="65" rx="3" ry="3" fill="#333" />
+                            <ellipse cx="115" cy="65" rx="3" ry="3" fill="#333" />
+                            <path d="M95,75 Q100,80 105,75" stroke="#333" stroke-width="2" fill="none" />
+                            <path d="M70,70 L50,90 L70,110" stroke="#333" stroke-width="2" fill="none" />
+                            <path d="M130,70 L150,90 L130,110" stroke="#333" stroke-width="2" fill="none" />
+                            <path d="M80,90 L120,90" stroke="#333" stroke-width="2" fill="none" />
+                            
+                            <!-- Book -->
+                            <rect x="80" y="85" width="30" height="15" fill="#6AAED9" stroke="#333" stroke-width="1" />
+                            <line x1="80" y1="92.5" x2="110" y2="92.5" stroke="#333" stroke-width="1" />
+                        </svg>
+                    </div>
+                    
+                    <!-- Coffee Items -->
+                    <div class="flex justify-start gap-4 mb-6">
+                        <svg viewBox="0 0 30 30" class="w-8 h-8">
+                            <rect x="5" y="15" width="20" height="10" fill="none" stroke="#333" stroke-width="1.5" />
+                            <circle cx="15" cy="15" r="3" fill="none" stroke="#333" stroke-width="1.5" />
+                        </svg>
+                        <svg viewBox="0 0 30 30" class="w-8 h-8">
+                            <circle cx="15" cy="20" r="5" fill="none" stroke="#333" stroke-width="1.5" />
+                            <rect x="12" y="10" width="6" height="10" fill="none" stroke="#333" stroke-width="1.5" />
+                        </svg>
+                        <svg viewBox="0 0 30 30" class="w-8 h-8">
+                            <rect x="10" y="15" width="10" height="10" fill="none" stroke="#333" stroke-width="1.5" />
+                            <rect x="12" y="10" width="6" height="5" fill="none" stroke="#333" stroke-width="1.5" />
+                        </svg>
+                        <svg viewBox="0 0 30 30" class="w-8 h-8">
+                            <rect x="10" y="15" width="10" height="10" fill="#6AAED9" stroke="#333" stroke-width="1.5" />
                         </svg>
                     </div>
 
-                    <!-- Personal Info -->
-                    <div class="space-y-4">
-                        <div>
-                            <p class="font-medium text-text">이름: 쉬이양</p>
-                        </div>
-                        <div>
-                            <p class="font-medium text-text">MBTI: ISTP</p>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fa fa-phone text-accent mr-2"></i>
-                            <p class="text-text">010-5807-2613</p>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fa fa-envelope text-accent mr-2"></i>
-                            <p class="text-text">xuyuyang@naver.com</p>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fa fa-map-marker text-accent mr-2"></i>
-                            <p class="text-text">중국 강시성</p>
-                        </div>
+                    <p class="text-dark/60 text-xs mt-auto pt-4 border-t border-dark/10 italic leading-relaxed font-medium">영감 출처: 어린이 감성의 그림체를 좋아해서, 귀여운 카툰 스타일의 카페 포스터를 디자인했습니다.</p>
+                </div>
+
+                <!-- Second Work - Halloween -->
+                <div class="sketch-border bg-white p-8 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-500 flex flex-col group">
+                    <h3 class="text-3xl md:text-4xl font-black text-dark font-handwritten mb-6 tracking-wide leading-tight group-hover:text-orange-accent transition-colors">HAPPY!!<br>HALLOWEEN</h3>
+                    
+                    <!-- Pumpkin Illustration -->
+                    <div class="my-4 transform group-hover:scale-105 transition-transform duration-500">
+                        <svg viewBox="0 0 200 200" class="w-full h-auto">
+                            <!-- Pumpkin -->
+                            <path d="M100,50 Q150,80 150,130 Q150,170 100,190 Q50,170 50,130 Q50,80 100,50 Z" fill="#FF7A5A" stroke="#333" stroke-width="2" />
+                            <!-- Eyes and Mouth -->
+                            <path d="M70,100 L85,110 M85,100 L70,110" stroke="#333" stroke-width="2" />
+                            <path d="M120,100 L135,110 M135,100 L120,110" stroke="#333" stroke-width="2" />
+                            <path d="M70,140 Q100,160 130,140" stroke="#333" stroke-width="2" fill="none" />
+                            <!-- Pumpkin Stem -->
+                            <path d="M90,50 L100,30 L110,50" fill="#6AA964" stroke="#333" stroke-width="2" />
+                            <!-- Ghost -->
+                            <path d="M50,80 Q45,60 55,40 Q65,60 60,80 L50,80 Z" fill="none" stroke="#333" stroke-width="2" />
+                            <circle cx="52" cy="55" r="2" fill="#333" />
+                            <circle cx="58" cy="55" r="2" fill="#333" />
+                            <!-- Witch Hat -->
+                            <path d="M140,60 L160,60 L150,30 Z" fill="none" stroke="#333" stroke-width="2" />
+                            <rect x="145" y="60" width="10" height="5" fill="none" stroke="#333" stroke-width="2" />
+                            <!-- Stars -->
+                            <path d="M110,70 L112,75 L118,75 L113,78 L115,83 L110,80 L105,83 L107,78 L102,75 L108,75 Z" fill="#FFD700" />
+                            <path d="M60,120 L62,125 L68,125 L63,128 L65,133 L60,130 L55,133 L57,128 L52,125 L58,125 Z" fill="#FFD700" />
+                            <path d="M130,150 L132,155 L138,155 L133,158 L135,163 L130,160 L125,163 L127,158 L122,155 L128,155 Z" fill="#FFD700" />
+                            <!-- Exclamation Mark -->
+                            <path d="M65,150 L70,170 M67.5,140 L67.5,150" stroke="#6AAED9" stroke-width="2" />
+                        </svg>
                     </div>
+                    
+                    <div class="flex justify-between items-end mt-6 mb-4">
+                        <p class="text-dark/70 text-sm font-bold">2025 october 31</p>
+                        <p class="text-dark/70 text-sm font-bold">星期五</p>
+                    </div>
+
+                    <p class="text-dark/60 text-xs mt-auto pt-4 border-t border-dark/10 italic leading-relaxed font-medium">영감 출처: 어린이 감성의 그림체를 좋아해서, 귀여운 카툰 스타일의 카페 포스터를 디자인했습니다.</p>
+                </div>
+
+                <!-- Third Work - Cat Cafe -->
+                <div class="sketch-border bg-white p-8 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-500 flex flex-col group">
+                    <div class="mb-6">
+                        <h3 class="text-3xl md:text-4xl font-black text-dark font-handwritten mb-2 tracking-wide leading-tight group-hover:text-brown transition-colors">cat<br>Café</h3>
+                        <p class="text-brown text-xs italic tracking-wider font-bold">COFFEE COFFEE</p>
+                        <p class="text-brown text-xs italic tracking-wider font-bold">Antecedent pleasure principle</p>
+                    </div>
+                    
+                    <!-- Character Illustration -->
+                    <div class="my-6 transform group-hover:scale-105 transition-transform duration-500">
+                        <svg viewBox="0 0 200 200" class="w-full h-auto">
+                            <!-- Cat Character -->
+                            <path d="M80,100 Q100,70 120,100 Q140,130 120,160 Q100,190 80,160 Q60,130 80,100 Z" fill="#C2946A" stroke="#333" stroke-width="2" />
+                            <!-- Face -->
+                            <circle cx="90" cy="120" r="3" fill="#333" />
+                            <circle cx="110" cy="120" r="3" fill="#333" />
+                            <path d="M90,135 Q100,145 110,135" stroke="#333" stroke-width="2" fill="none" />
+                            <circle cx="85" cy="115" r="3" fill="#FFB6C1" />
+                            <circle cx="115" cy="115" r="3" fill="#FFB6C1" />
+                            <!-- Chef Hat -->
+                            <path d="M90,80 L110,80 L105,60 L95,60 Z" fill="none" stroke="#333" stroke-width="2" />
+                            <rect x="85" y="80" width="30" height="5" fill="none" stroke="#333" stroke-width="2" />
+                            <!-- Coffee Pot -->
+                            <path d="M130,130 L150,130 L150,150 L130,150 Z" fill="#FF7A5A" stroke="#333" stroke-width="2" />
+                            <path d="M140,130 L140,120 L150,110" stroke="#333" stroke-width="2" fill="none" />
+                            <!-- Coffee Cup -->
+                            <circle cx="160" cy="160" r="8" fill="none" stroke="#333" stroke-width="2" />
+                            <rect x="165" y="155" width="5" height="3" fill="none" stroke="#333" stroke-width="2" />
+                        </svg>
+                    </div>
+                    
+                    <p class="text-dark/70 text-xs mt-4 mb-4 font-handwritten font-bold">In life, the best things happen when you drink coffee, enjoy every land if you can't you just drink coffee.</p>
+                    
+                    <p class="text-dark/60 text-xs mt-auto pt-4 border-t border-dark/10 italic leading-relaxed font-medium">영감 출처: 어린이 감성의 그림체를 좋아해서, 귀여운 카툰 스타일의 카페 포스터를 디자인했습니다.</p>
                 </div>
             </div>
 
-            <!-- Right Column - Details -->
-            <div class="w-full md:w-2/3 space-y-10">
-                <!-- Introduction -->
-                <div class="relative pl-6">
-                    <div class="absolute left-0 top-0 bottom-0 w-0.5 bg-accent"></div>
-                    <p class="text-text leading-relaxed">
-                        저는 밝고 소통에 능한 성격으로, 2년간 영상 제작 경험을 보유하고 있습니다. 
-                        PS, After Effects, Final Cut Pro 등 편집 프로그램을 능숙하게 다루며, 
-                        탄탄한 편집 및 촬영 특수효과 실력을 갖추고 있습니다.
-                    </p>
+            <!-- Photos Section -->
+            <h2 class="text-3xl md:text-4xl font-black text-dark font-handwritten mt-20 mb-10 text-center tracking-wide">照片</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-16">
+                <!-- Photo 1 -->
+                <div class="sketch-border bg-white p-6 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-500 flex flex-col group">
+                    <div class="overflow-hidden mb-4">
+                        <img src="https://picsum.photos/seed/photo1/400/300" alt="Photo 1" class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <h3 class="text-2xl font-black text-dark font-handwritten mb-1 group-hover:text-primary transition-colors">城市光影</h3>
+                    <p class="text-dark/70 text-sm mb-4 font-bold">2024.10.15</p>
+                    <p class="text-dark/60 text-xs mt-auto pt-4 border-t border-dark/10 italic leading-relaxed font-medium">영감 출처: 어린이 감성의 그림체를 좋아해서, 귀여운 카툰 스타일의 카페 포스터를 디자인했습니다.</p>
                 </div>
+                <!-- Photo 2 -->
+                <div class="sketch-border bg-white p-6 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-500 flex flex-col group">
+                    <div class="overflow-hidden mb-4">
+                        <img src="https://picsum.photos/seed/photo2/400/300" alt="Photo 2" class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <h3 class="text-2xl font-black text-dark font-handwritten mb-1 group-hover:text-primary transition-colors">自然风光</h3>
+                    <p class="text-dark/70 text-sm mb-4 font-bold">2024.08.22</p>
+                    <p class="text-dark/60 text-xs mt-auto pt-4 border-t border-dark/10 italic leading-relaxed font-medium">영감 출처: 어린이 감성의 그림체를 좋아해서, 귀여운 카툰 스타일의 카페 포스터를 디자인했습니다.</p>
+                </div>
+                <!-- Photo 3 -->
+                <div class="sketch-border bg-white p-6 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-500 flex flex-col group">
+                    <div class="overflow-hidden mb-4">
+                        <img src="https://picsum.photos/seed/photo3/400/300" alt="Photo 3" class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <h3 class="text-2xl font-black text-dark font-handwritten mb-1 group-hover:text-primary transition-colors">人像摄影</h3>
+                    <p class="text-dark/70 text-sm mb-4 font-bold">2024.09.01</p>
+                    <p class="text-dark/60 text-xs mt-auto pt-4 border-t border-dark/10 italic leading-relaxed font-medium">영감 출처: 어린이 감성의 그림체를 좋아해서, 귀여운 카툰 스타일의 카페 포스터를 디자인했습니다.</p>
+                </div>
+            </div>
 
-                <!-- Skills Section -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Software Skills -->
-                    <div class="bg-white p-5 border border-accent/30">
-                        <h3 class="font-bold text-text mb-4 pb-2 border-b border-primary">소프트웨어 능력</h3>
-                        <div class="space-y-3">
-                            <div>
-                                <p class="text-sm text-text mb-1">Ps</p>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 85%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <p class="text-sm text-text mb-1">Ai</p>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 65%"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <p class="text-sm text-text mb-1">AE</p>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 70%"></div>
-                                </div>
-                            </div>
+            <!-- PS Section -->
+            <h2 class="text-3xl md:text-4xl font-black text-dark font-handwritten mt-20 mb-10 text-center tracking-wide">PS 作品</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-16">
+                <!-- PS Work 1 -->
+                <div class="sketch-border bg-white p-6 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-500 flex flex-col group">
+                    <div class="overflow-hidden mb-4">
+                        <img src="https://picsum.photos/seed/ps1/400/300" alt="PS Work 1" class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <h3 class="text-2xl font-black text-dark font-handwritten mb-1 group-hover:text-primary transition-colors">幻想世界</h3>
+                    <p class="text-dark/70 text-sm mb-4 font-bold">数字合成</p>
+                    <p class="text-dark/60 text-xs mt-auto pt-4 border-t border-dark/10 italic leading-relaxed font-medium">영감 출처: 어린이 감성의 그림체를 좋아해서, 귀여운 카툰 스타일의 카페 포스터를 디자인했습니다.</p>
+                </div>
+                <!-- PS Work 2 -->
+                <div class="sketch-border bg-white p-6 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-500 flex flex-col group">
+                    <div class="overflow-hidden mb-4">
+                        <img src="https://picsum.photos/seed/ps2/400/300" alt="PS Work 2" class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <h3 class="text-2xl font-black text-dark font-handwritten mb-1 group-hover:text-primary transition-colors">复古海报</h3>
+                    <p class="text-dark/70 text-sm mb-4 font-bold">平面设计</p>
+                    <p class="text-dark/60 text-xs mt-auto pt-4 border-t border-dark/10 italic leading-relaxed font-medium">영감 출처: 어린이 감성의 그림체를 좋아해서, 귀여운 카툰 스타일의 카페 포스터를 디자인했습니다.</p>
+                </div>
+                <!-- PS Work 3 -->
+                <div class="sketch-border bg-white p-6 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-500 flex flex-col group">
+                    <div class="overflow-hidden mb-4">
+                        <img src="https://picsum.photos/seed/ps3/400/300" alt="PS Work 3" class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <h3 class="text-2xl font-black text-dark font-handwritten mb-1 group-hover:text-primary transition-colors">超现实主义</h3>
+                    <p class="text-dark/70 text-sm mb-4 font-bold">创意图像</p>
+                    <p class="text-dark/60 text-xs mt-auto pt-4 border-t border-dark/10 italic leading-relaxed font-medium">영감 출처: 어린이 감성의 그림체를 좋아해서, 귀여운 카툰 스타일의 카페 포스터를 디자인했습니다.</p>
+                </div>
+            </div>
+
+            <!-- Video Section -->
+            <h2 class="text-3xl md:text-4xl font-black text-dark font-handwritten mt-20 mb-10 text-center tracking-wide">视频</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-16">
+                <!-- Video 1 -->
+                <div class="sketch-border bg-white p-6 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-500 flex flex-col group">
+                    <div class="relative overflow-hidden mb-4">
+                        <img src="https://picsum.photos/seed/video1/400/300" alt="Video 1" class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/20 transition-colors duration-300">
+                            <svg class="w-16 h-16 text-white/80 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg>
                         </div>
                     </div>
-
-                    <!-- Video Production Skills -->
-                    <div class="bg-white p-5 border border-accent/30">
-                        <h3 class="font-bold text-text mb-4 pb-2 border-b border-primary">영상 제작 전문 기술</h3>
-                        <ul class="space-y-2 text-text text-sm">
-                            <li>촬영 기술</li>
-                            <li>영상 편집</li>
-                            <li>후반 작업</li>
-                            <li>영상 기획</li>
-                        </ul>
-                    </div>
-
-                    <!-- Languages -->
-                    <div class="bg-white p-5 border border-accent/30">
-                        <h3 class="font-bold text-text mb-4 pb-2 border-b border-primary">학력</h3>
-                        <ul class="space-y-2 text-text text-sm">
-                            <li>졸업 학교: 단국대학교</li>
-                            <li>전공</li>
-                            <li>점수</li>
-                            <li>영상콘텐츠학부</li>
-                        </ul>
-                    </div>
+                    <h3 class="text-2xl font-black text-dark font-handwritten mt-2 mb-1 group-hover:text-primary transition-colors">旅程记录</h3>
+                    <p class="text-dark/70 text-sm mb-4 font-bold">动态影像</p>
+                    <p class="text-dark/60 text-xs mt-auto pt-4 border-t border-dark/10 italic leading-relaxed font-medium">영감 출처: 어린이 감성의 그림체를 좋아해서, 귀여운 카툰 스타일의 카페 포스터를 디자인했습니다.</p>
                 </div>
-
-                <!-- Two Columns Section -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Education -->
-                    <div class="bg-white p-5 border border-accent/30">
-                        <h3 class="font-bold text-text mb-4 pb-2 border-b border-primary">단국대학교 (Dankook University), 한국</h3>
-                        <p class="text-text text-sm mb-2">학과: 미디어커뮤니케이션학과</p>
-                        <p class="text-text text-sm mb-2">주요 과목: 영상 제작, 디자인, 미디어 연구</p>
-                        <p class="text-text text-sm mb-4">GPA: 3.7/4.5</p>
-                        
-                        <p class="text-text text-sm mb-1">중국 강시성 전천 1중학교 / 고등학교</p>
-                        <p class="text-text text-sm">교과 방송부 활동, 음악 동아리 부원장 경험</p>
-                        <p class="text-text text-sm">교내 카메라 기기 및 실습 참여</p>
+                <!-- Video 2 -->
+                <div class="sketch-border bg-white p-6 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-500 flex flex-col group">
+                    <div class="relative overflow-hidden mb-4">
+                        <img src="https://picsum.photos/seed/video2/400/300" alt="Video 2" class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/20 transition-colors duration-300">
+                            <svg class="w-16 h-16 text-white/80 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg>
+                        </div>
                     </div>
-
-                    <!-- Experience -->
-                    <div class="bg-white p-5 border border-accent/30">
-                        <h3 class="font-bold text-text mb-4 pb-2 border-b border-primary">캠퍼스 활동</h3>
-                        <p class="text-text text-sm mb-2">음악 동아리 부원장 (단국대학교)</p>
-                        <ul class="text-text text-sm list-disc pl-5 mb-3">
-                            <li>교내 카메라 기기 및 실습 담당</li>
-                            <li>텔레비전 방송室 운영 및 촬영 참여</li>
-                        </ul>
-                        
-                        <p class="text-text text-sm mb-2">학부 미디어 프로젝트 (단국대학교)</p>
-                        <ul class="text-text text-sm list-disc pl-5">
-                            <li>영상 제작, 편집, 특수효과 작업</li>
-                            <li>디자인 및 포토샵 작업</li>
-                        </ul>
+                    <h3 class="text-2xl font-black text-dark font-handwritten mt-2 mb-1 group-hover:text-primary transition-colors">动画短片</h3>
+                    <p class="text-dark/70 text-sm mb-4 font-bold">MG动画</p>
+                    <p class="text-dark/60 text-xs mt-auto pt-4 border-t border-dark/10 italic leading-relaxed font-medium">영감 출처: 어린이 감성의 그림체를 좋아해서, 귀여운 카툰 스타일의 카페 포스터를 디자인했습니다.</p>
+                </div>
+                <!-- Video 3 -->
+                <div class="sketch-border bg-white p-6 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-500 flex flex-col group">
+                    <div class="relative overflow-hidden mb-4">
+                        <img src="https://picsum.photos/seed/video3/400/300" alt="Video 3" class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-700">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/20 transition-colors duration-300">
+                            <svg class="w-16 h-16 text-white/80 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg>
+                        </div>
                     </div>
+                    <h3 class="text-2xl font-black text-dark font-handwritten mt-2 mb-1 group-hover:text-primary transition-colors">产品演示</h3>
+                    <p class="text-dark/70 text-sm mb-4 font-bold">商业视频</p>
+                    <p class="text-dark/60 text-xs mt-auto pt-4 border-t border-dark/10 italic leading-relaxed font-medium">영감 출처: 어린이 감성의 그림체를 좋아해서, 귀여운 카툰 스타일의 카페 포스터를 디자인했습니다.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Simple animation for elements when they come into view
-        document.addEventListener('DOMContentLoaded', () => {
-            const animateOnScroll = () => {
-                const elements = document.querySelectorAll('.bg-white');
-                elements.forEach(el => {
-                    const rect = el.getBoundingClientRect();
-                    if (rect.top < window.innerHeight && rect.bottom >= 0) {
-                        el.classList.add('transition-all', 'duration-700', 'ease-out');
-                        el.style.transform = 'translateY(0)';
-                        el.style.opacity = '1';
-                    }
-                });
-            };
-
-            // Initial styles
-            document.querySelectorAll('.bg-white').forEach(el => {
-                el.style.transform = 'translateY(20px)';
-                el.style.opacity = '0';
-            });
-
-            // Run on load and scroll
-            window.addEventListener('load', animateOnScroll);
-            window.addEventListener('scroll', animateOnScroll);
+        function showSection(sectionId) {
+            // Hide all sections
+            document.getElementById('home-section').classList.add('hidden');
+            document.getElementById('about-section').classList.add('hidden');
+            document.getElementById('works-section').classList.add('hidden');
             
-            // Trigger once
-            animateOnScroll();
+            // Show selected section
+            const selected = document.getElementById(sectionId + '-section');
+            selected.classList.remove('hidden');
+            
+            // Update Nav Active State
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-' + sectionId).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+
+            // Trigger animations if any
+            if (sectionId === 'about') {
+                const elements = document.querySelectorAll('#about-section .bg-white');
+                elements.forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        el.classList.add('transition-all', 'duration-700', 'ease-out');
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    }, 100);
+                });
+            } else if (sectionId === 'works') {
+                const items = document.querySelectorAll('#works-section .sketch-border');
+                items.forEach((item, index) => {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(20px)';
+                    item.style.transition = 'all 0.5s ease-out'; // Ensure smooth entry
+                    
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                        
+                        // Remove inline transform after animation to allow hover effects to work
+                        setTimeout(() => {
+                            item.style.transform = '';
+                            item.style.transition = ''; // Revert to CSS class transition
+                        }, 500);
+                    }, 100 + (index * 100)); // Faster stagger for smoother feel
+                });
+            }
+        }
+
+        // Add subtle fade-in animation on load for home section
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial active state is already set in HTML for Home
         });
     </script>
 </body>
